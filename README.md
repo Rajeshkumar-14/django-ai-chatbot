@@ -60,9 +60,9 @@ This project implements an AI-powered chatbot using Django and the ChatGPT API. 
 
 5.  **Run the Django development server:**
 
-         ```bash
-         python manage.py runserver
-         ```
+      ```bash
+       python manage.py runserver
+      ```
 
     Access the booking system at [http://localhost:8000/](http://localhost:8000/)
 
