@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "chatgpt chatbot"
+version = "0.1.0"
+description = "AI ChatBot using Python, Django and ChatGPT."
+authors = ["Rajesh Kumar <Rajeshrk233444@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+django = "^5.0.2"
+openai = "^1.12.0"
+django-environ = "^0.11.2"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

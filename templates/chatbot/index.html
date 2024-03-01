@@ -1,0 +1,187 @@
+{% extends 'chatbot/base.html' %}
+{% load static %}
+{% block title %}ChatBot{% endblock title %}
+
+{% block index %}
+<div class="container-fluid m-0 p-0 fira-code-regular">
+    <section class="min-vh-100 d-flex justify-content-evenly align-items-center">
+        <div class="row d-flex justify-content-center w-100">
+            <div class="chat-container">
+                <div class="card chat-card shadow-lg">
+                    <div class="card-header d-flex justify-content-between align-items-center bg-info">
+                        <h2>AI CHATBOT</h2>
+                        <a href="https://github.com/Rajeshkumar-14" class="btn btn-transparent">
+                            <i class="fa-brands fa-github"></i> RajeshKumar
+                        </a>
+                    </div>
+                    <div class="card-body chat-card-body py-2">
+                        <!-- Warning Text -->
+                        <div class="d-flex flex-row justify-content-center mb-4 response-chat my-2">
+                            <div class="p-3 ms-3 response-text bg-warning-subtle">
+                                <p class="mb-0 text-wrap"><i class="fa-solid fa-triangle-exclamation text-warning"></i>
+                                    The chats are not saved. Do not refresh the page.</p>
+                            </div>
+                        </div>
+                        <!-- Dynamically Loaded Chats -->
+                    </div>
+                    <div class="card-footer py-2">
+                        <form class="userForm" method="POST">
+                            {% csrf_token %}
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"
+                                    placeholder="Ask Me Anything ( Information / Coding / Jokes)" id="userMessage"
+                                    aria-label="User Input" title="Ask Me Anything ( Information / Coding / Jokes)"
+                                    aria-describedby="userMessage" name="userMessage" autocomplete="off">
+                                <button type="submit" class="btn btn-custom send-message-btn">
+                                    <i class="fa-solid fa-paper-plane"></i> SEND
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </section>
+</div>
+<!-- jQuery CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $('.userForm')[0].reset();
+        $('.userForm').on("submit", function (e) {
+            e.preventDefault();
+            usermessage = $('[name=userMessage]', this).val().trim();
+            csrfToken = $('[name=csrfmiddlewaretoken]', this).val().trim();
+            if (!usermessage) { return; }
+
+
+            // Append user input to the chat interface
+            $('.chat-card-body').append(`
+                        <div class="d-flex flex-row justify-content-end mb-4 user-chat">
+                                <div class="p-3 me-3 border user-text shadow">
+                                    <p class="small mb-0 text-wrap">${usermessage}</p>
+                                </div>
+                                <img src="{% static 'chatbot/images/in-chat-user-icon.png' %}" alt="avatar 1"
+                                    class="userIcon">
+                            </div>
+                        `);
+            // Append loader
+            let $loader = $(`
+                            <div class="d-flex flex-row justify-content-start mb-4 response-chat response-chat-loader">
+                                <img src="{% static 'chatbot/images/in-chat-icon.png' %}" class="botIcon" alt="avatar 1" style="width: 45px; height: 100%;">
+                                <div class="px-3 py-1 ms-3 response-text shadow">
+                                    <p class="small mb-0 text-wrap">
+                                        <div class="chat-loader-container p-0 m-0">
+                                            <div class="dot"></div>
+                                            <div class="dot"></div>
+                                            <div class="dot"></div>
+                                        </div>
+                                    </p>
+                                </div>
+                            </div>
+                        `);
+            $('.chat-card-body').append($loader);
+            // Send the user message to the server using AJAX
+            $('.chat-card-body').scrollTop($('.chat-card-body')[0].scrollHeight);
+            $.ajax({
+                url: "{% url 'get-response' %}",
+                method: 'POST',
+                data: {
+                    message: usermessage,
+                    csrfmiddlewaretoken: csrfToken
+                },
+                success: function (response) {
+                    $loader.remove();
+                    let codeBlockRegex = /```([a-zA-Z]*)\n([\s\S]*?)```/g;
+
+                    // Check if the message contains a code block
+                    if (codeBlockRegex.test(response.message)) {
+                        let parts = response.message.split(codeBlockRegex);
+                        let beforeCodeBlock = parts[0];
+                        let codeLanguage = parts[1];
+                        let code = parts[2];
+                        let afterCodeBlock = parts[3];
+
+                        let formattedCode = code.replace(/\n/g, "<br>").replace(/\t/g, "&nbsp;&nbsp;&nbsp;&nbsp;");
+
+                        let formattedMessage = `
+                        <div class="d-flex flex-row justify-content-start mb-4 response-chat">
+                            <img src="{% static 'chatbot/images/in-chat-icon.png' %}" class="botIcon" alt="avatar 1">
+                            <div class="p-3 ms-3 response-text shadow">
+                                <p>${beforeCodeBlock}</p>
+                                <div class="card mb-3 overflow-auto code-card bg-dark text-light">
+                                    <div class="card-header d-flex justify-content-between bg-black text-light">
+                                        <span>${codeLanguage}</span>
+                                        <button class="btn btn-primary btn-sm copy-code-btn"><i
+                                                class="fa-solid fa-copy"></i></button>
+                                    </div>
+                                    <div class="card-body text-custom-success" id="code-card-body">
+                                        <pre><code class="language-${codeLanguage}">${formattedCode}</code></pre>
+                                    </div>
+                                </div>
+                                <p class="small mb-0 text-wrap">${afterCodeBlock}</p>
+                            </div>`;
+                        $('.chat-card-body').append(formattedMessage);
+                    } else {
+                        // If no code block, show message without code block
+                        let formattedMessage = `
+                        <div class="d-flex flex-row justify-content-start mb-4 response-chat">
+                            <img src="{% static 'chatbot/images/in-chat-icon.png' %}" class="botIcon" alt="avatar 1" style="width: 45px; height: 100%;">
+                            <div class="p-3 ms-3 response-text shadow">
+                                <p class="small mb-0 text-wrap">${response.message}</p>
+                            </div>
+                        </div>`;
+                        $('.chat-card-body').append(formattedMessage);
+                    }
+                    $('.chat-card-body').scrollTop($('.chat-card-body')[0].scrollHeight);
+                },
+
+
+                error: function () {
+                    $loader.remove();
+                    let errorMessage = `
+                        <div class="d-flex flex-row justify-content-start mb-4 response-chat">
+                            <img src="{% static 'chatbot/images/in-chat-icon.png' %}" alt="avatar 1" style="width: 45px; height: 100%;">
+                            <div class="p-3 ms-3 response-text border border-danger bg-danger-subtle">
+                                <p class="small mb-0 text-wrap">Error Compeleting your request, Please try again.</p>
+                            </div>
+                        </div>`;
+                    $('.chat-card-body').append(errorMessage);
+                }
+            });
+            $('.userForm')[0].reset();
+        });
+        $(document).on("click", ".copy-code-btn", function () {
+            // Get the code block containing the code
+            var $codeBlock = $(this).closest(".response-chat").find("code");
+            var codeText = $codeBlock.text();
+            var $tempDiv = $("<div>");
+            $tempDiv.css({
+                position: "absolute",
+                left: "-9999px",
+                top: "0",
+            });
+            $("body").append($tempDiv);
+            $tempDiv.html(codeText);
+            var range = document.createRange();
+            range.selectNodeContents($tempDiv.get(0));
+            var selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            document.execCommand("copy");
+
+            $tempDiv.remove();
+
+            var $btn = $(this);
+            $btn.html('<i class="fa-solid fa-check"></i>').removeClass("btn-primary").addClass("btn-success");
+
+            setTimeout(function () {
+                $btn.html('<i class="fa-solid fa-copy"></i>').removeClass("btn-success").addClass("btn-primary");
+            }, 1000);
+        });
+
+    });
+</script>
+{% endblock index %}

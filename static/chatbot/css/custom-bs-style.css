@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans&family=Poppins:wght@300&display=swap');
+
+:root {
+    --bg-white: #fff;
+    --bg-black: #000;
+    --bg-dark: #333;
+    --text-white: #fff;
+    --text-dark: #333;
+    --text-black: #000;
+    --primary-color: #410BFF;
+    --secondary-color: #3EF3E1;
+    --primary-font: 'Poppins', sans-serif;
+    --secondary-font: 'Open Sans', sans-serif;
+}
+
+.btn-custom {
+    font-weight: 600;
+    color: var(--bs-white) !important;
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    border-width: 1px;
+    border-style: solid;
+    border-radius: 0.25rem;
+    padding: 8px 16px;
+    line-height: 1.5;
+    cursor: pointer;
+}
+
+.btn-custom:hover {
+    color: var(--bs-dark) !important;
+    background-color: var(--secondary-color) !important;
+    border-color: var(--secondary-color) !important;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.btn-custom:focus,
+.btn-custom.focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.25rem rgba(184, 133, 102, 0.5);
+}
+
+.btn-custom:active,
+.btn-custom.active {
+    color: var(--bs-white) !important;
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    background-image: none;
+    transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    box-shadow: none;
+}
+
+.btn-outline-custom {
+    background-color: transparent !important;
+    color: var(--bs-dark) !important;
+    border: none !important;
+    padding: 8px 16px;
+    border: 1px solid var(--primary-color) !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-outline-custom:hover {
+    background-color: var(--primary-color) !important;
+    color: var(--bs-white) !important;
+    border-color: var(--primary-color) !important;
+    transition: all 0.3s ease;
+}
+
+.btn-transparent {
+    background-color: transparent !important;
+    color: var(--bs-dark) !important;
+    border: 0.5px solid transparent !important;
+    padding: 8px 16px;
+    border-radius: 5px !important;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-transparent:hover {
+    color: var(--bs-light) !important;
+    background: var(--primary-color) !important;
+    border-color: transparent !important;
+    border-radius: 5px !important;
+    transition: all 0.3s ease;
+}
+
+.bg-blur {
+    background-color: transparent !important;
+    backdrop-filter: blur(35px) !important;
+}
+
+.bg-blur-lg {
+    background-color: transparent !important;
+    backdrop-filter: blur(50px) !important;
+}
+.text-justify {
+    text-align: center !important;
+}
+.text-custom-success{
+    color: rgb(0, 246, 0) !important;
+}
+/* CUSTOM SCROLL */
+::-webkit-scrollbar {
+    width: 0.25rem;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--primary-color);
+    border-radius: 5px;
+    padding: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: greenyellow;
+}
+
+* {
+    scrollbar-width: thin;
+    scrollbar-color: var(--primary-color) transparent;
+}
